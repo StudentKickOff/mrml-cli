@@ -1,19 +1,17 @@
-use clap::Parser;
+use std::env::args;
+
 use mrml::prelude::{parser::ParserOptions, render::RenderOptions};
 
-#[derive(Parser, Debug)]
-#[command(about, long_about = None)]
-struct Args {
-    #[arg(short, long)]
-    template: String,
-}
-
 fn main() {
-    let args = Args::parse();
+    if args().len() != 2 {
+        eprintln!("This program takes 2 argument");
+        return;
+    }
+    let template = args().skip(1).next().unwrap();
 
     let parser_options = ParserOptions::default();
     let render_options = RenderOptions::default();
-    match mrml::parse_with_options(&args.template, &parser_options) {
+    match mrml::parse_with_options(&template, &parser_options) {
         Ok(mjml) => match mjml.render(&render_options) {
             Ok(html) => print!("{}", html),
             Err(err) => eprintln!("Failed to render to html: {err:?}"),
